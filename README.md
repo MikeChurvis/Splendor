@@ -17,3 +17,29 @@ You gain gems by taking tokens and buying cards.
 To buy a card, for each gem count required, first count the number of gems you have on cards. Pay the remainder (if any) in tokens.
 
 You may not buy a card that you cannot pay for.
+
+## Game State
+
+The IDs of the participating players.
+
+A turn number.
+
+Each token and its owner.
+
+Each card and its owner.
+
+Each noble and its owner.
+
+### Derived State
+
+Whose turn it is.
+
+Whether or not endgame has been triggered.
+
+## Actions
+
+Take coins.
+
+Buy a card.
+
+Reserve a card.
