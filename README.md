@@ -4,6 +4,10 @@ An online clone of my favorite board game. I'm building it to exercise my full-s
 
 ## Specifications
 
+### Game State Flow
+
+![](Splendor.state-diagram.svg)
+
 ### At Game Start
 
 There are three decks of cards, separated by level.
