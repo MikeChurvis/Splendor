@@ -2,44 +2,30 @@
 
 An online clone of my favorite board game. I'm building it to exercise my full-stack skills.
 
-## Rules
+## Specifications
 
-A game may be played by two, three, or four players.
+### At Game Start
 
-The goal of the game is to earn the most points.
+There are three decks of cards, separated by level.
 
-When you buy a card, you gain any points on it.
+There are four cards revealed from each deck.
 
-You buy cards by paying for their cost in gems.
+The number of nobles revealed equals the player count plus one.
 
-You gain gems by taking tokens and buying cards.
+There are 5 Gold tokens.
 
-To buy a card, for each gem count required, first count the number of gems you have on cards. Pay the remainder (if any) in tokens.
+In a 4-player game, there are 7 of each non-Gold color of token.
 
-You may not buy a card that you cannot pay for.
+In a 3-player game, there are 5 of each non-Gold color of token.
 
-## Game State
+In a 2-player game, there are 4 of each non-Gold color of token.
 
-The IDs of the participating players.
+### On a Player's Turn
 
-A turn number.
+The player must take one of the following actions:
+- Take 3 tokens, each of a different color.
+- Take 2 tokens, both of the same color.
+- Buy a card.
+- Reserve a card.
 
-Each token and its owner.
-
-Each card and its owner.
-
-Each noble and its owner.
-
-### Derived State
-
-Whose turn it is.
-
-Whether or not endgame has been triggered.
-
-## Actions
-
-Take coins.
-
-Buy a card.
-
-Reserve a card.
+When taking three tokens,
