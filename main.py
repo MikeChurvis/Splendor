@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum
-from itertools import groupby
 
 GameId = str
 PlayerId = str
@@ -99,7 +98,30 @@ class GameState:
         If tied for cards, all tied players win.
         """
 
+        # There is no winner if endgame has not been triggered.
         if not self.endgame_is_triggered:
             return []
 
-        raise NotImplementedError("This method is incomplete.")
+        highest_score = max(player.total_points for player in self.players)
+
+        players_with_highest_score = [
+            player for player in self.players if player.total_points == highest_score
+        ]
+
+        # The player with the most points wins.
+        if len(players_with_highest_score) == 1:
+            return [player.id for player in players_with_highest_score]
+
+        fewest_cards = min(
+            len(player.cards_purchased) for player in players_with_highest_score
+        )
+
+        players_with_fewest_cards = [
+            player
+            for player in players_with_highest_score
+            if len(player.cards_purchased) == fewest_cards
+        ]
+
+        # If tied for points, the player with the fewest cards purchased wins.
+        # If tied for cards, all tied players win.
+        return [player.id for player in players_with_fewest_cards]
