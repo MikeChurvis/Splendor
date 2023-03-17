@@ -1,4 +1,5 @@
 from enum import Enum
+from dataclasses import dataclass
 
 
 class GemColor(str, Enum):
@@ -9,7 +10,12 @@ class GemColor(str, Enum):
     WHITE = "white"
 
 
-class TokenColor(GemColor):
+class TokenColor(str, Enum):
+    BLACK = "black"
+    RED = "red"
+    GREEN = "green"
+    BLUE = "blue"
+    WHITE = "white"
     GOLD = "gold"
 
 
@@ -19,6 +25,7 @@ class CardLevel(int, Enum):
     THREE = 3
 
 
+@dataclass
 class Card:
     id: str
     color: GemColor
@@ -27,11 +34,13 @@ class Card:
     points: int
 
 
+@dataclass
 class Noble:
     id: str
     cost: dict[GemColor, int]
 
 
+@dataclass
 class Player:
     id: str
     tokens: dict[TokenColor, int]
@@ -40,6 +49,7 @@ class Player:
     nobles: list[Noble]
 
 
+@dataclass
 class Game:
     turn: int
     players: list[Player]
