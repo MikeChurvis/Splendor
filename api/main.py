@@ -1,9 +1,46 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from typing import Literal
 
 
 CardLevel = Literal[1, 2, 3]
+
+
+@dataclass
+class GemValue:
+    white: int = 0
+    blue: int = 0
+    green: int = 0
+    red: int = 0
+    black: int = 0
+
+    def __add__(self, other) -> GemValue:
+        if not isinstance(other, GemValue):
+            raise TypeError("other value must be a GemValue.")
+
+        return GemValue(
+            white=self.white + other.white,
+            blue=self.blue + other.blue,
+            green=self.green + other.green,
+            red=self.red + other.red,
+            black=self.black + other.black,
+        )
+
+    def __sub__(self, other) -> GemValue:
+        if not isinstance(other, GemValue):
+            raise TypeError("other value must be a GemValue.")
+
+        return GemValue(
+            white=max(self.white - other.white, 0),
+            blue=max(self.blue - other.blue, 0),
+            green=max(self.green - other.green, 0),
+            red=max(self.red - other.red, 0),
+            black=max(self.black - other.black, 0),
+        )
+
+    def total_value(self) -> int:
+        return self.white + self.blue + self.green + self.red + self.black
 
 
 class GemColor(str, Enum):
