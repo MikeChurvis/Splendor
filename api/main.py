@@ -70,7 +70,7 @@ def validate_action_take_tokens(
     game: GameData,
     player_index: int,
     tokens_taken: list[GemColor],
-    tokens_put_back: list[GemColor],
+    tokens_returned: list[GemColor],
 ) -> list[str]:
     """
     Returns an exhaustive list of the problems with the proposed Take Tokens action.
@@ -108,8 +108,28 @@ def validate_action_take_tokens(
         if game.tokens[color] == 0:
             errors.append(f"There are no {color} tokens available.")
 
-    # TODO: Check hand limit and tokens returned
+    # Check tokens returned.
+    if len(tokens_returned) > len(tokens_taken):
+        errors.append("You may not return more tokens than you have taken.")
 
-    # TODO: Check tokens returned
+    combined_token_counts = game.players[player_index].tokens.copy()
+
+    for color in tokens_taken:
+        combined_token_counts[color] += 1
+
+    for color in tokens_returned:
+        combined_token_counts[color] -= 1
+
+    for color, count in combined_token_counts.items():
+        if count < 0:
+            errors.append(f"You don't have enough {color} tokens to return that many.")
+
+    # Check token count at end of round.
+    total_token_count_after_action = sum(combined_token_counts.values())
+
+    if total_token_count_after_action > 10:
+        errors.append(
+            f"You must put back {total_token_count_after_action - 10} more tokens to bring your total down to 10."
+        )
 
     return errors
