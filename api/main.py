@@ -80,15 +80,17 @@ def validate_action_take_tokens(
     errors = validate_action__actor_is_this_turns_player(game, player_index)
 
     # Check rule violations.
+    colors_of_tokens_taken = set(tokens_taken)
+
     taking_more_than_3_tokens = len(tokens_taken) > 3
 
     taking_3_with_more_than_one_of_a_color = (
-        len(tokens_taken) == 3 and len(set(tokens_taken)) != 3
+        len(tokens_taken) == 3 and len(colors_of_tokens_taken) != 3
     )
 
     taking_2_of_same_color_when_fewer_than_4_exist = (
         len(tokens_taken) == 2
-        and len(set(tokens_taken)) == 1
+        and len(colors_of_tokens_taken) == 1
         and len(game.tokens[tokens_taken[0]]) < 4
     )
 
@@ -102,7 +104,7 @@ def validate_action_take_tokens(
         )
 
     # Check game inventory.
-    for color in set(tokens_taken):
+    for color in colors_of_tokens_taken:
         if game.tokens[color] == 0:
             errors.append(f"There are no {color} tokens available.")
 
