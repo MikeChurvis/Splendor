@@ -14,6 +14,14 @@ class GemColor(str, Enum):
     WHITE = "white"
 
 
+class PurchasableCardLocation(int, Enum):
+    FIRST_COLUMN = 0
+    SECOND_COLUMN = 1
+    THIRD_COLUMN = 2
+    FOURTH_COLUMN = 3
+    TOP_OF_DECK = 4
+
+
 TokenColor = GemColor | Literal["gold"]
 
 
@@ -45,7 +53,10 @@ class GameData:
     round_number: int
     this_turns_player_index: int
     players: list[PlayerData]
-    cards: dict[CardLevel, list[Card]]
+    decks: dict[CardLevel, list[Card]]
+    trade_rows: dict[
+        CardLevel, tuple[Card | None, Card | None, Card | None, Card | None]
+    ]
     tokens: dict[TokenColor, int]
     nobles: list[Noble]
 
@@ -66,11 +77,12 @@ def validate_action__actor_is_this_turns_player(
     return errors
 
 
-def validate_action_take_tokens(
+def validate_action__take_tokens(
     game: GameData,
     player_index: int,
+    *,
     tokens_taken: list[GemColor],
-    tokens_returned: list[GemColor],
+    tokens_returned: list[TokenColor] = [],
 ) -> list[str]:
     """
     Returns an exhaustive list of the problems with the proposed Take Tokens action.
@@ -131,5 +143,95 @@ def validate_action_take_tokens(
         errors.append(
             f"You must put back {total_token_count_after_action - 10} more tokens to bring your total down to 10."
         )
+
+    return errors
+
+
+def validate_action__purchase_card(
+    game: GameData,
+    player_index: int,
+    *,
+    card_location: CardLevel | Literal["reserve"],
+    card_index: int,
+    tokens_returned: list[GemColor] = [],
+) -> list[str]:
+    """
+    Returns a list of the problems with the proposed Purchase Card action.
+    If the list is empty, there are no problems.
+    """
+    errors = validate_action__actor_is_this_turns_player(game, player_index)
+
+    player = game.players[player_index]
+
+    # Check that the card is available.
+    card_to_buy = None
+
+    # Check the player's reserve for the card.
+    if card_location == "reserve":
+        if card_index not in range(3):
+            errors.append(
+                f"Position {card_index} is out of bounds for a reserved card."
+            )
+        elif len(player.cards_reserved) <= card_index:
+            errors.append(f"You do not have a reserved card at position {card_index}.")
+        else:
+            card_to_buy = player.cards_reserved[card_index]
+
+    # Check the trade rows for the card.
+    elif card_location in CardLevel:
+        if card_index not in range(4):
+            errors.append(
+                f"Position {card_index} is out of bounds for a card in the trade row."
+            )
+        elif game.trade_rows[card_location] is None:
+            errors.append(
+                f"There is no card at position {card_index} in the trade row at level {card_location}."
+            )
+        else:
+            card_to_buy = game.trade_rows[card_location][card_index]
+
+    # There are no other places the card can be.
+    else:
+        errors.append(
+            f'{card_location} is not a valid location wherein cards may be purchased. Valid locations are "reserve", 1, 2, or 3.'
+        )
+
+    if card_to_buy is None:
+        return errors
+
+    # Now that the card is located, check that the player can pay for it.
+    gems_on_cards_owned = {
+        gem_color: len(card_list) for gem_color, card_list in player.cards_owned.items()
+    }
+
+    tokens_needed_to_buy_card = card_to_buy.cost.copy()
+
+    for color, count in gems_on_cards_owned.items():
+        tokens_needed_to_buy_card[color] -= count
+
+    tokens_needed_to_buy_card = {
+        color: count for color, count in tokens_needed_to_buy_card.items() if count > 0
+    }
+
+    # TODO: Compare the token cost of the card against the player's inventory.
+
+    return errors
+
+
+def validate_action__reserve_card(
+    game: GameData,
+    player_index: int,
+    *,
+    card_id: str | None = None,
+    top_of_deck: CardLevel | None = None,
+    tokens_returned: list[TokenColor] = [],
+) -> list[str]:
+    """
+    Returns a list of the problems with the proposed action.
+    If the list is empty, there are no problems.
+    """
+    errors = validate_action__actor_is_this_turns_player(game, player_index)
+
+    # Check that the player can pay for the card.
 
     return errors
