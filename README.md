@@ -2,34 +2,22 @@
 
 An online clone of my favorite board game. I'm building it to exercise my full-stack skills.
 
-## Specifications
+## Site Flow
 
-### Game State Flow
+### Landing Page
 
-![](Splendor.state-diagram.svg)
+One button: **Play**
 
-### At Game Start
+Click the Play button to join a pending game, or create one if none exists.
 
-There are three decks of cards, separated by level.
+### Pending Game
 
-There are four cards revealed from each deck.
+#### If there are no games available
 
-The number of nobles revealed equals the player count plus one.
+There is a title, front and center, that says "Waiting for players..."
 
-There are 5 Gold tokens.
+You have one option: **Leave**
 
-In a 4-player game, there are 7 of each non-Gold color of token.
+## Game Flow
 
-In a 3-player game, there are 5 of each non-Gold color of token.
-
-In a 2-player game, there are 4 of each non-Gold color of token.
-
-### On a Player's Turn
-
-The player must take one of the following actions:
-- Take 3 tokens, each of a different color.
-- Take 2 tokens, both of the same color.
-- Buy a card.
-- Reserve a card.
-
-When taking three tokens,
+![](Splendor-Game-Flow.svg)
